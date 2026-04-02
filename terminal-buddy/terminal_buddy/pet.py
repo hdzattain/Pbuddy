@@ -77,7 +77,7 @@ class Pet:
         self.clamp_stats()
         xp_msg = self.gain_xp(3)
         msg = f"{self.name} took a nap! (+{amount} energy, -5 hunger)"
-        return msg if xp_msg is None else f"{ms} {xp_msg}"
+        return msg if xp_msg is None else f"{msg} {xp_msg}"
 
     def train(self, amount: int = 25) -> str:
         if not self.is_alive:
@@ -90,7 +90,7 @@ class Pet:
         self.clamp_stats()
         xp_msg = self.gain_xp(amount)
         msg = f"{self.name} trained hard! (-15 energy, -5 mood)"
-        return msg if xp_msg is None else f"{ms} {xp_msg}"
+        return msg if xp_msg is None else f"{msg} {xp_msg}"
 
     def pet_action(self, amount: int = 10) -> str:
         if not self.is_alive:
