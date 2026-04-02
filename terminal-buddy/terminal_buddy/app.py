@@ -145,15 +145,14 @@ Screen {
 
 #pet-display {
     width: 24;
-    height: 14;
+    height: 12;
     border: solid green;
     content-align: center middle;
-    text-align: center;
 }
 
 #stats-panel {
     width: 1fr;
-    height: 14;
+    height: 12;
     border: solid cyan;
     padding: 1;
 }
@@ -236,10 +235,7 @@ Screen {
         if not self.pets:
             return
         pet = self.pets[self.current_pet_index]
-        # Get current theme for renderer
-        theme_names = list(THEMES.keys())
-        theme = THEMES[theme_names[self.current_theme_index]]
-        self.renderer = PetRenderer(pet.species, theme)
+        self.renderer = PetRenderer(pet.species)
         pet_display = self.query_one("#pet-display", PetDisplay)
         pet_display.set_renderer(self.renderer)
         state = self.renderer.get_state_for_pet(pet)
@@ -288,24 +284,7 @@ Screen {
         theme_names = list(THEMES.keys())
         self.current_theme_index = (self.current_theme_index + 1) % len(theme_names)
         theme_name = theme_names[self.current_theme_index]
-        theme = THEMES[theme_name]
-        self._log_message(get_text("theme_changed", theme_name=theme.name))
-        # Apply theme to UI components
-        self._apply_theme(theme)
-        # Update renderer with new theme
-        self._update_display()
-
-    def _apply_theme(self, theme):
-        """Apply theme colors to UI components."""
-        # Apply to pet display border
-        pet_display = self.query_one("#pet-display", PetDisplay)
-        pet_display.styles.border = ("solid", theme.primary)
-        # Apply to stats panel border
-        stats_panel = self.query_one("#stats-panel", StatsPanel)
-        stats_panel.styles.border = ("solid", theme.secondary)
-        # Apply to message log border
-        msg_log = self.query_one("#message-log", MessageLog)
-        msg_log.styles.border = ("solid", theme.accent)
+        self._log_message(get_text("theme_changed", theme_name=THEMES[theme_name].name))
 
     def action_toggle_language(self):
         new_lang = toggle_language()
