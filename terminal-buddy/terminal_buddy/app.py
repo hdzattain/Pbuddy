@@ -157,7 +157,7 @@ Screen {
 
 #message-log {
     height: 8;
-    border: solid dim;
+    border: solid grey;
 }
 """
 
