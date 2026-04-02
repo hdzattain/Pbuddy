@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Terminal Buddy Textual TUI Application."""
 from textual.app import App, ComposeResult
 from textual.containers import Horizontal, Vertical, Container, Grid
@@ -11,6 +12,8 @@ from terminal_buddy.storage import PetStorage
 from terminal_buddy.renderer import PetRenderer
 from terminal_buddy.evolution import STARTER_SPECIES
 from terminal_buddy.themes import THEMES
+from terminal_buddy.i18n import get_text, set_language, get_language, toggle_language
+
 
 class PetDisplay(Static):
     """Widget that shows the pet ASCII art with animation."""
@@ -34,6 +37,7 @@ class PetDisplay(Static):
             self._current_frame = self.renderer.next_frame(state)
             self.update(self._current_frame)
 
+
 class StatsPanel(Static):
     """Widget showing pet stats with colored bars."""
 
@@ -52,31 +56,32 @@ class StatsPanel(Static):
 
     def update_stats(self):
         if not self.pet:
-            self.update("No pet selected")
+            self.update(get_text("no_pet_selected"))
             return
 
         lines = []
-        lines.append(f"Name: {self.pet.name}")
-        lines.append(f"Species: {self.pet.species}  Lv.{self.pet.level}")
+        lines.append(f"{get_text('name')}: {self.pet.name}")
+        lines.append(f"{get_text('species')}: {self.pet.species}  Lv.{self.pet.level}")
         xp_needed = self.pet.xp_for_next_level
-        lines.append(f"XP: {self.pet.xp}/{xp_needed}")
+        lines.append(f"{get_text('xp')}: {self.pet.xp}/{xp_needed}")
         lines.append("")
-        lines.append(f"Hunger: {self._bar(self.pet.hunger)} {self.pet.hunger}%")
-        lines.append(f"Mood:   {self._bar(self.pet.mood)} {self.pet.mood}%")
-        lines.append(f"Energy: {self._bar(self.pet.energy)} {self.pet.energy}%")
-        lines.append(f"Status: {self.pet.status_emoji}")
+        lines.append(f"{get_text('hunger')}: {self._bar(self.pet.hunger)} {self.pet.hunger}%")
+        lines.append(f"{get_text('mood')}:   {self._bar(self.pet.mood)} {self.pet.mood}%")
+        lines.append(f"{get_text('energy')}: {self._bar(self.pet.energy)} {self.pet.energy}%")
+        lines.append(f"{get_text('status')}: {self.pet.status_emoji}")
 
         self.update(chr(10).join(lines))
+
 
 class ActionBar(Horizontal):
     """Row of action buttons."""
 
     def compose(self):
-        yield Button("Feed [F]", id="btn-feed", variant="primary")
-        yield Button("Play [P]", id="btn-play")
-        yield Button("Sleep [S]", id="btn-sleep")
-        yield Button("Train [T]", id="btn-train")
-        yield Button("Pet [E]", id="btn-pet")
+        yield Button(get_text("feed_btn"), id="btn-feed", variant="primary")
+        yield Button(get_text("play_btn"), id="btn-play")
+        yield Button(get_text("sleep_btn"), id="btn-sleep")
+        yield Button(get_text("train_btn"), id="btn-train")
+        yield Button(get_text("pet_btn"), id="btn-pet")
 
 
 class MessageLog(RichLog):
@@ -89,18 +94,19 @@ class MessageLog(RichLog):
     def add_message(self, message: str):
         self.write(message)
 
+
 class NewPetScreen(Screen):
     """Screen for creating a new pet."""
 
     def compose(self):
         yield Grid(
-            Label("Create New Pet", classes="title"),
-            Label("Name:"),
-            Input(placeholder="Enter pet name", id="input-name"),
-            Label("Species:"),
-            Input(placeholder="blob, duck, cat, cactus, snail, rabbit", id="input-species"),
-            Button("Create", id="btn-create", variant="primary"),
-            Button("Cancel", id="btn-cancel"),
+            Label(get_text("create_new_pet"), classes="title"),
+            Label(get_text("name_label")),
+            Input(placeholder=get_text("name_placeholder"), id="input-name"),
+            Label(get_text("species_label")),
+            Input(placeholder=get_text("species_placeholder"), id="input-species"),
+            Button(get_text("create_btn"), id="btn-create", variant="primary"),
+            Button(get_text("cancel_btn"), id="btn-cancel"),
             id="new-pet-grid"
         )
 
@@ -114,10 +120,12 @@ class NewPetScreen(Screen):
         elif event.button.id == "btn-cancel":
             self.dismiss(None)
 
+
 class TerminalBuddyApp(App):
     """Main application."""
 
     TITLE = "Terminal Buddy"
+
     CSS = """
 Screen {
     align: center middle;
@@ -170,6 +178,7 @@ Screen {
         ("tab", "next_pet", "Next Pet"),
         ("n", "new_pet", "New Pet"),
         ("d", "toggle_theme", "Theme"),
+        ("l", "toggle_language", "Language"),
         ("q", "quit", "Quit"),
     ]
 
@@ -181,6 +190,11 @@ Screen {
         self.current_pet_index = 0
         self.current_theme_index = 0
         self.renderer = None
+
+    @property
+    def TITLE(self):
+        return get_text("app_title")
+
     def compose(self):
         yield Header()
         with Horizontal():
@@ -209,6 +223,7 @@ Screen {
                 self._log_message(msg)
         elif not self.pets:
             self.exit()
+
     def _animation_tick(self):
         if self.pets:
             pet_display = self.query_one("#pet-display", PetDisplay)
@@ -240,6 +255,7 @@ Screen {
         for msg in messages:
             self._log_message(msg)
         self._update_display()
+
     def action_feed(self):
         self._do_action("feed")
 
@@ -259,7 +275,7 @@ Screen {
         if self.pets:
             self.current_pet_index = (self.current_pet_index + 1) % len(self.pets)
             self._update_display()
-            self._log_message(f"Switched to {self.pets[self.current_pet_index].name}")
+            self._log_message(get_text("switched_to", name=self.pets[self.current_pet_index].name))
 
     def action_new_pet(self):
         self.push_screen(NewPetScreen(), self._on_new_pet_result)
@@ -268,7 +284,19 @@ Screen {
         theme_names = list(THEMES.keys())
         self.current_theme_index = (self.current_theme_index + 1) % len(theme_names)
         theme_name = theme_names[self.current_theme_index]
-        self._log_message(f"Theme: {THEMES[theme_name].name}")
+        self._log_message(get_text("theme_changed", theme_name=THEMES[theme_name].name))
+
+    def action_toggle_language(self):
+        new_lang = toggle_language()
+        lang_name = get_text("lang_zh" if new_lang == "zh" else "lang_en")
+        self._log_message(get_text("lang_switched", lang=lang_name))
+        # Refresh the UI
+        self._update_display()
+        # Rebuild action bar with new language
+        action_bar = self.query_one("#action-bar", ActionBar)
+        action_bar.remove_children()
+        for btn in action_bar.compose():
+            action_bar.mount(btn)
 
     @on(Button.Pressed)
     def on_button_pressed(self, event: Button.Pressed):
@@ -283,6 +311,7 @@ Screen {
             self.action_train()
         elif button_id == "btn-pet":
             self.action_pet_action()
+
 
 def main():
     """Entry point."""
