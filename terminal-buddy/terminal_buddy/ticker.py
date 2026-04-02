@@ -1,5 +1,8 @@
+# -*- coding: utf-8 -*-
 from datetime import datetime
 from typing import TYPE_CHECKING
+
+from .i18n import get_text
 
 if TYPE_CHECKING:
     from .pet import Pet
@@ -17,7 +20,7 @@ class Ticker:
         messages = []
         
         if not pet.is_alive:
-            return [f"{pet.name} is no longer with us..."]
+            return [get_text("no_longer_with_us", name=pet.name)]
         
         hours = Ticker.hours_since(pet.last_interaction)
         
@@ -34,20 +37,20 @@ class Ticker:
         
         if pet.hunger <= 0:
             pet.is_alive = False
-            messages.append(f"{pet.name} has starved... You should have fed them!")
+            messages.append(get_text("starved", name=pet.name))
             return messages
         
         if hours >= 24:
-            messages.append(f"{pet.name} missed you! ({int(hours)} hours passed)")
+            messages.append(get_text("missed_you", name=pet.name, hours=int(hours)))
         elif hours >= 1:
-            messages.append(f"{int(hours)} hours have passed since you last checked on {pet.name}.")
+            messages.append(get_text("hours_passed", hours=int(hours), name=pet.name))
         
         if hunger_loss > 20:
-            messages.append(f"{pet.name} is getting hungry...")
+            messages.append(get_text("getting_hungry", name=pet.name))
         if mood_loss > 15:
-            messages.append(f"{pet.name} seems lonely...")
+            messages.append(get_text("seems_lonely", name=pet.name))
         if energy_gain > 20:
-            messages.append(f"{pet.name} is well rested!")
+            messages.append(get_text("well_rested", name=pet.name))
         
         pet.last_interaction = datetime.now().isoformat()
         

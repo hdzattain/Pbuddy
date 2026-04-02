@@ -1,7 +1,10 @@
+# -*- coding: utf-8 -*-
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any
 import uuid
+
+from .i18n import get_text
 
 
 @dataclass
@@ -48,58 +51,58 @@ class Pet:
 
     def feed(self, amount: int = 20) -> str:
         if not self.is_alive:
-            return f"{self.name} is no longer with us..."
+            return get_text("no_longer_with_us", name=self.name)
         self.hunger = min(100, self.hunger + amount)
         self.last_fed = datetime.now().isoformat()
         self.last_interaction = datetime.now().isoformat()
         self.clamp_stats()
         xp_msg = self.gain_xp(5)
-        msg = f"{self.name} ate a snack! (+{amount} hunger)"
+        msg = get_text("ate_snack", name=self.name, amount=amount)
         return msg if xp_msg is None else f"{self.name} {xp_msg}"
 
     def play(self, amount: int = 15) -> str:
         if not self.is_alive:
-            return f"{self.name} is no longer with us..."
+            return get_text("no_longer_with_us", name=self.name)
         self.mood = min(100, self.mood + amount)
         self.energy = max(0, self.energy - 10)
         self.last_interaction = datetime.now().isoformat()
         self.clamp_stats()
         xp_msg = self.gain_xp(10)
-        msg = f"{self.name} had fun playing! (+{amount} mood, -10 energy)"
+        msg = get_text("had_fun_playing", name=self.name, amount=amount)
         return msg if xp_msg is None else f"{self.name} {xp_msg}"
 
     def sleep(self, amount: int = 30) -> str:
         if not self.is_alive:
-            return f"{self.name} is no longer with us..."
+            return get_text("no_longer_with_us", name=self.name)
         self.energy = min(100, self.energy + amount)
         self.hunger = max(0, self.hunger - 5)
         self.last_interaction = datetime.now().isoformat()
         self.clamp_stats()
         xp_msg = self.gain_xp(3)
-        msg = f"{self.name} took a nap! (+{amount} energy, -5 hunger)"
+        msg = get_text("took_nap", name=self.name, amount=amount)
         return msg if xp_msg is None else f"{msg} {xp_msg}"
 
     def train(self, amount: int = 25) -> str:
         if not self.is_alive:
-            return f"{self.name} is no longer with us..."
+            return get_text("no_longer_with_us", name=self.name)
         if self.energy < 15:
-            return f"{self.name} is too tired to train!"
+            return get_text("too_tired_to_train", name=self.name)
         self.energy = max(0, self.energy - 15)
         self.mood = max(0, self.mood - 5)
         self.last_interaction = datetime.now().isoformat()
         self.clamp_stats()
         xp_msg = self.gain_xp(amount)
-        msg = f"{self.name} trained hard! (-15 energy, -5 mood)"
+        msg = get_text("trained_hard", name=self.name)
         return msg if xp_msg is None else f"{msg} {xp_msg}"
 
     def pet_action(self, amount: int = 10) -> str:
         if not self.is_alive:
-            return f"{self.name} is no longer with us..."
+            return get_text("no_longer_with_us", name=self.name)
         self.mood = min(100, self.mood + amount)
         self.last_interaction = datetime.now().isoformat()
         self.clamp_stats()
         xp_msg = self.gain_xp(2)
-        msg = f"{self.name} enjoyed the cuddles! (+{amount} mood)"
+        msg = get_text("enjoyed_cuddles", name=self.name, amount=amount)
         return msg if xp_msg is None else f"{self.name} {xp_msg}"
 
     def gain_xp(self, amount: int) -> str | None:
@@ -109,7 +112,7 @@ class Pet:
         if self.xp >= self.xp_for_next_level:
             self.xp -= self.xp_for_next_level
             self.level += 1
-            return f"Level up! {self.name} is now level {self.level}!"
+            return get_text("level_up", name=self.name, level=self.level)
         return None
 
     def clamp_stats(self) -> None:

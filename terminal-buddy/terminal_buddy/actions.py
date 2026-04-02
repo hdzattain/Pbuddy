@@ -1,7 +1,9 @@
+# -*- coding: utf-8 -*-
 from typing import TYPE_CHECKING
 
 from .ticker import Ticker
 from .evolution import EvolutionSystem
+from .i18n import get_text
 
 if TYPE_CHECKING:
     from .pet import Pet
@@ -38,7 +40,7 @@ class PetActions:
         elif action == "pet":
             action_msg = pet.pet_action()
         else:
-            messages.append(f"Unknown action: {action}")
+            messages.append(get_text("unknown_action", action=action))
             return messages
         
         if action_msg:
@@ -60,13 +62,13 @@ class PetActions:
         
         if species not in STARTER_SPECIES:
             species = "blob"
-            messages.append(f"Unknown species, defaulting to 'blob'")
+            messages.append(get_text("unknown_species"))
         
         pet = Pet(name=name, species=species)
         self.storage.add_pet(pet)
         
-        messages.append(f"Welcome {pet.name} the {pet.species}!")
-        messages.append("Take good care of them!")
+        messages.append(get_text("welcome_pet", name=pet.name, species=pet.species))
+        messages.append(get_text("take_good_care"))
         
         return pet, messages
     
