@@ -196,7 +196,7 @@ Screen {
             self.push_screen(NewPetScreen(), self._on_new_pet_result)
         else:
             self._update_display()
-        self.set_interval(0.8, self._animate)
+        self.set_interval(0.8, self._animation_tick)
 
     def _on_new_pet_result(self, result):
         if result:
@@ -209,7 +209,7 @@ Screen {
                 self._log_message(msg)
         elif not self.pets:
             self.exit()
-    def _animate(self):
+    def _animation_tick(self):
         if self.pets:
             pet_display = self.query_one("#pet-display", PetDisplay)
             if pet_display.renderer:
