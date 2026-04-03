@@ -80,6 +80,41 @@ LANG_EN = {
     # Evolution
     "evolved": "{name} is evolving! {old} → {new}",
     
+    # Rarity
+    "rarity_label": "Rarity",
+    "rarity_result": "Rarity: {rarity}",
+    "shiny_congratulations": "WOW! A SHINY pet! You are incredibly lucky!",
+    "shiny_label": "✦ Shiny",
+    
+    # Breakthrough
+    "phase_label": "Phase",
+    "materials_label": "Materials",
+    "breakthrough_btn": "Break [B]",
+    "breakthrough_success": "{name} broke through! {old_phase} -> {new_phase}!",
+    "cannot_breakthrough": "{name} cannot break through yet! (Need materials or higher level)",
+    "level_capped": "{name} has reached the level cap ({level})! Breakthrough required!",
+    "no_materials": "No materials",
+    
+    # Travel
+    "travel_btn": "Travel [V]",
+    "atlas_btn": "Atlas [A]",
+    "travel_label": "Travel",
+    "atlas_label": "Atlas",
+    "already_traveling": "{name} is already traveling!",
+    "travel_started": "{name} set off for {stage_name} - {location}! (~{duration} min)",
+    "travel_complete": "{name} returned from {stage_name} - {location}!",
+    "new_atlas_entry": "New atlas entry: {location}!",
+    "atlas_complete": "Atlas complete for {stage_name}! Guaranteed breakthrough material!",
+    "material_obtained": "Obtained breakthrough material: {material}!",
+    "next_stage_unlocked": "New travel stage unlocked: {stage_name}!",
+    "polar_unlocked": "Polar expedition unlocked! Explore the Arctic and Antarctic!",
+    "shiny_evolution_item_get": "Incredible! Found a Shiny Evolution Crystal!",
+    "not_traveling": "Not traveling",
+    "travel_returning": "Returning from {location}...",
+    "traveling_to": "Traveling to {location} (~{minutes} min left)",
+    "no_atlas_entries": "No atlas entries yet",
+    "shiny_items_label": "Shiny Crystals",
+    
     # Language toggle
     "lang_switched": "Language: {lang}",
     "lang_en": "English",
@@ -161,6 +196,41 @@ LANG_ZH = {
     
     # Evolution
     "evolved": "{name} 进化了！{old} → {new}",
+    
+    # Rarity
+    "rarity_label": "稀有度",
+    "rarity_result": "稀有度：{rarity}",
+    "shiny_congratulations": "哇！闪光宠物！你真是太幸运了！",
+    "shiny_label": "✦ 闪光",
+    
+    # Breakthrough
+    "phase_label": "阶段",
+    "materials_label": "材料",
+    "breakthrough_btn": "突破 [B]",
+    "breakthrough_success": "{name} 突破成功！{old_phase} → {new_phase}！",
+    "cannot_breakthrough": "{name} 暂时无法突破！（需要突破材料或更高等级）",
+    "level_capped": "{name} 已达到等级上限（{level}级）！需要突破！",
+    "no_materials": "无材料",
+    
+    # Travel
+    "travel_btn": "旅行 [V]",
+    "atlas_btn": "图鉴 [A]",
+    "travel_label": "旅行",
+    "atlas_label": "图鉴",
+    "already_traveling": "{name} 正在旅行中！",
+    "travel_started": "{name} 出发前往{stage_name} - {location}！(约{duration}分钟)",
+    "travel_complete": "{name} 从{stage_name} - {location}归来！",
+    "new_atlas_entry": "新图鉴记录：{location}！",
+    "atlas_complete": "{stage_name}图鉴已集齐！必定获得突破材料！",
+    "material_obtained": "获得突破材料：{material}！",
+    "next_stage_unlocked": "新旅行阶段解锁：{stage_name}！",
+    "polar_unlocked": "南北极探险已解锁！去探索极地吧！",
+    "shiny_evolution_item_get": "不可思议！获得了闪光进化水晶！",
+    "not_traveling": "未在旅行",
+    "travel_returning": "正从{location}返回...",
+    "traveling_to": "正在前往{location}（约{minutes}分钟）",
+    "no_atlas_entries": "暂无图鉴记录",
+    "shiny_items_label": "闪光水晶",
     
     # Language toggle
     "lang_switched": "语言：{lang}",

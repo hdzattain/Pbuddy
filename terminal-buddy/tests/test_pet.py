@@ -10,9 +10,16 @@ from terminal_buddy.ticker import Ticker
 from terminal_buddy.evolution import EvolutionSystem, STARTER_SPECIES
 from terminal_buddy.storage import PetStorage
 from terminal_buddy.actions import PetActions
+from terminal_buddy.i18n import set_language
 
 
 class TestPet(unittest.TestCase):
+    def setUp(self):
+        set_language("en")
+    
+    def tearDown(self):
+        set_language("zh")
+    
     def test_pet_creation(self):
         pet = Pet(name="TestPet", species="blob")
         self.assertEqual(pet.name, "TestPet")
@@ -82,6 +89,50 @@ class TestPet(unittest.TestCase):
         restored = Pet.from_dict(data)
         self.assertEqual(restored.name, "TestPet")
         self.assertEqual(restored.species, "cat")
+    
+    def test_pet_new_fields_defaults(self):
+        """Test new fields have correct defaults."""
+        pet = Pet(name="TestPet")
+        self.assertEqual(pet.rarity, 1)
+        self.assertFalse(pet.is_shiny)
+        self.assertEqual(pet.rarity_color, "white")
+        self.assertEqual(pet.phase, 1)
+        self.assertEqual(pet.breakthrough_materials, {})
+        self.assertEqual(pet.travel_atlas, {})
+        self.assertIsNone(pet.current_travel)
+        self.assertEqual(pet.shiny_evolution_items, 0)
+    
+    def test_pet_to_dict_includes_new_fields(self):
+        """Test to_dict includes rarity/breakthrough/travel fields."""
+        pet = Pet(name="TestPet", rarity=3, is_shiny=True, phase=2)
+        pet.breakthrough_materials = {"basic_stone": 1}
+        pet.travel_atlas = {"1": ["北京"]}
+        data = pet.to_dict()
+        self.assertEqual(data["rarity"], 3)
+        self.assertTrue(data["is_shiny"])
+        self.assertEqual(data["phase"], 2)
+        self.assertEqual(data["breakthrough_materials"], {"basic_stone": 1})
+        self.assertEqual(data["travel_atlas"], {"1": ["北京"]})
+    
+    def test_pet_from_dict_backward_compatible(self):
+        """Test from_dict works with old data without new fields."""
+        old_data = {"name": "OldPet", "species": "blob", "level": 5}
+        pet = Pet.from_dict(old_data)
+        self.assertEqual(pet.name, "OldPet")
+        self.assertEqual(pet.rarity, 1)
+        self.assertEqual(pet.phase, 1)
+        self.assertEqual(pet.travel_atlas, {})
+    
+    def test_level_cap_prevents_level_up(self):
+        """Test level cap from breakthrough system."""
+        pet = Pet(name="TestPet", level=14, phase=1)
+        pet.xp = 1390  # xp_for_next_level at 14 is 1400
+        msg = pet.gain_xp(20)
+        self.assertEqual(pet.level, 15)
+        # Now at cap, further XP should not increase level
+        msg = pet.gain_xp(10000)
+        self.assertEqual(pet.level, 15)
+        self.assertEqual(pet.xp, 0)
 
 
 class TestTicker(unittest.TestCase):
@@ -148,12 +199,14 @@ class TestStorage(unittest.TestCase):
 
 class TestActions(unittest.TestCase):
     def setUp(self):
+        set_language("en")
         self.temp_dir = tempfile.mkdtemp()
         self.storage = PetStorage(storage_dir=self.temp_dir)
         self.actions = PetActions(self.storage)
     
     def tearDown(self):
         shutil.rmtree(self.temp_dir)
+        set_language("zh")
     
     def test_create_pet(self):
         pet, msgs = self.actions.create_pet("Buddy", "blob")

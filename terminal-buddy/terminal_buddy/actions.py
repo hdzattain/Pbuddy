@@ -4,6 +4,9 @@ from typing import TYPE_CHECKING
 from .ticker import Ticker
 from .evolution import EvolutionSystem
 from .i18n import get_text
+from .rarity import calculate_rarity, calculate_shiny, get_rarity_info, get_rarity_display
+from .breakthrough import can_breakthrough, perform_breakthrough
+from .travel import start_travel, check_travel_complete
 
 if TYPE_CHECKING:
     from .pet import Pet
@@ -39,6 +42,19 @@ class PetActions:
             action_msg = pet.train()
         elif action == "pet":
             action_msg = pet.pet_action()
+        elif action == "breakthrough":
+            if can_breakthrough(pet):
+                action_msg = perform_breakthrough(pet)
+            else:
+                action_msg = get_text("cannot_breakthrough", name=pet.name)
+        elif action == "travel":
+            # 先检查是否有旅行完成
+            travel_msgs = check_travel_complete(pet)
+            if travel_msgs:
+                messages.extend(travel_msgs)
+                action_msg = None
+            else:
+                action_msg = start_travel(pet)
         else:
             messages.append(get_text("unknown_action", action=action))
             return messages
@@ -65,9 +81,25 @@ class PetActions:
             messages.append(get_text("unknown_species"))
         
         pet = Pet(name=name, species=species)
+        
+        # 计算稀有度和闪光
+        rarity = calculate_rarity()
+        is_shiny = calculate_shiny()
+        rarity_info = get_rarity_info(rarity)
+        pet.rarity = rarity
+        pet.is_shiny = is_shiny
+        pet.rarity_color = rarity_info["color"]
+        
         self.storage.add_pet(pet)
         
         messages.append(get_text("welcome_pet", name=pet.name, species=pet.species))
+        
+        # 显示稀有度信息
+        rarity_display = get_rarity_display(rarity, is_shiny)
+        messages.append(get_text("rarity_result", rarity=rarity_display))
+        if is_shiny:
+            messages.append(get_text("shiny_congratulations"))
+        
         messages.append(get_text("take_good_care"))
         
         return pet, messages

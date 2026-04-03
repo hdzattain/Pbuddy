@@ -7,6 +7,7 @@ import unittest
 from datetime import datetime, timedelta
 from terminal_buddy.pet import Pet
 from terminal_buddy.ticker import Ticker
+from terminal_buddy.i18n import set_language
 
 
 class TestTickerConstants(unittest.TestCase):
@@ -66,6 +67,12 @@ class TestHoursSince(unittest.TestCase):
 
 class TestTickerTick(unittest.TestCase):
     """Test tick method."""
+
+    def setUp(self):
+        set_language("en")
+    
+    def tearDown(self):
+        set_language("zh")
 
     def test_tick_no_time_passed(self):
         """Test tick with no time passed doesn't change stats."""
@@ -211,6 +218,12 @@ class TestTickerBoundaryValues(unittest.TestCase):
 
 class TestTickerMessages(unittest.TestCase):
     """Test ticker message generation."""
+
+    def setUp(self):
+        set_language("en")
+    
+    def tearDown(self):
+        set_language("zh")
 
     def test_no_message_for_short_absence(self):
         """Test no time-related message for short absence."""
