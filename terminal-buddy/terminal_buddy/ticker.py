@@ -14,6 +14,7 @@ class Ticker:
     HUNGER_DECAY_PER_HOUR: float = 3.0
     MOOD_DECAY_PER_HOUR: float = 2.0
     ENERGY_RECOVERY_PER_HOUR: float = 5.0
+    TIRED_RECOVERY_PER_HOUR: float = 3.0  # 每小时疲劳度-3
     
     @staticmethod
     def tick(pet: "Pet") -> list[str]:
@@ -30,10 +31,12 @@ class Ticker:
         hunger_loss = int(hours * Ticker.HUNGER_DECAY_PER_HOUR)
         mood_loss = int(hours * Ticker.MOOD_DECAY_PER_HOUR)
         energy_gain = int(hours * Ticker.ENERGY_RECOVERY_PER_HOUR)
+        tired_recovery = int(hours * Ticker.TIRED_RECOVERY_PER_HOUR)
         
         pet.hunger = max(0, pet.hunger - hunger_loss)
         pet.mood = max(0, pet.mood - mood_loss)
         pet.energy = min(100, pet.energy + energy_gain)
+        pet.tired = max(0, pet.tired - tired_recovery)
         
         if pet.hunger <= 0:
             pet.is_alive = False
@@ -51,6 +54,8 @@ class Ticker:
             messages.append(get_text("seems_lonely", name=pet.name))
         if energy_gain > 20:
             messages.append(get_text("well_rested", name=pet.name))
+        if pet.tired >= 80:
+            messages.append(get_text("feeling_exhausted", name=pet.name))
         
         # 检查旅行是否完成
         from .travel import check_travel_complete

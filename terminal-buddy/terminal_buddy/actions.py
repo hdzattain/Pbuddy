@@ -92,7 +92,11 @@ class PetActions:
         
         self.storage.add_pet(pet)
         
-        messages.append(get_text("welcome_pet", name=pet.name, species=pet.species))
+        # 物种名称翻译
+        species_display = get_text(f"species_{pet.species}")
+        if species_display == f"species_{pet.species}":
+            species_display = pet.species
+        messages.append(get_text("welcome_pet", name=pet.name, species=species_display))
         
         # 显示稀有度信息
         rarity_display = get_rarity_display(rarity, is_shiny)

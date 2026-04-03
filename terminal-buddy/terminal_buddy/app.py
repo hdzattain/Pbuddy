@@ -64,7 +64,11 @@ class StatsPanel(Static):
 
         lines = []
         lines.append(f"{get_text('name')}: {self.pet.name}")
-        lines.append(f"{get_text('species')}: {self.pet.species}  Lv.{self.pet.level}")
+        # 物种名称翻译
+        species_display = get_text(f"species_{self.pet.species}")
+        if species_display == f"species_{self.pet.species}":
+            species_display = self.pet.species
+        lines.append(f"{get_text('species')}: {species_display}  Lv.{self.pet.level}")
         
         # 稀有度显示
         rarity_display = get_rarity_display(self.pet.rarity, self.pet.is_shiny, get_language())
@@ -82,7 +86,10 @@ class StatsPanel(Static):
         lines.append(f"{get_text('hunger')}: {self._bar(self.pet.hunger)} {self.pet.hunger}%")
         lines.append(f"{get_text('mood')}:   {self._bar(self.pet.mood)} {self.pet.mood}%")
         lines.append(f"{get_text('energy')}: {self._bar(self.pet.energy)} {self.pet.energy}%")
-        lines.append(f"{get_text('status')}: {self.pet.status_emoji}")
+        lines.append(f"{get_text('tired_label')}: {self._bar(self.pet.tired)} {self.pet.tired}%")
+        # 状态显示翻译
+        status_text = get_text(self.pet.status_emoji)
+        lines.append(f"{get_text('status')}: {status_text}")
         # 旅行状态
         travel_status = get_travel_status(self.pet, get_language())
         lines.append(f"{get_text('travel_label')}: {travel_status}")

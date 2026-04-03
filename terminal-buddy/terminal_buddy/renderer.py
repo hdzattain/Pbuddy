@@ -32,6 +32,8 @@ class PetRenderer:
             return "sad"
         if pet.energy < 10:
             return "sleep"
+        if pet.tired >= 80:  # 新增：严重疲劳
+            return "sleep"   # 复用sleep动画表示疲劳
         if pet.happiness < 20:
             return "sad"
         if pet.mood > 80:

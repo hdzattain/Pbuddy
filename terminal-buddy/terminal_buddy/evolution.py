@@ -1,5 +1,7 @@
 from typing import TYPE_CHECKING
 
+from .i18n import get_text
+
 if TYPE_CHECKING:
     from .pet import Pet
 
@@ -49,7 +51,15 @@ class EvolutionSystem:
         old_species = pet.species
         pet.species = new_species
         
-        return f"{pet.name} evolved from {old_species} to {new_species}!"
+        # 使用翻译的物种名
+        old_name = get_text(f"species_{old_species}")
+        if old_name == f"species_{old_species}":
+            old_name = old_species
+        new_name = get_text(f"species_{new_species}")
+        if new_name == f"species_{new_species}":
+            new_name = new_species
+        
+        return get_text("evolved_message", name=pet.name, old=old_name, new=new_name)
     
     @staticmethod
     def get_evolution_chain(species: str) -> list[str]:

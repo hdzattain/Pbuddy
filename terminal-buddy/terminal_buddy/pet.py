@@ -30,6 +30,7 @@ class Pet:
     travel_atlas: dict = field(default_factory=dict)
     current_travel: dict | None = None
     shiny_evolution_items: int = 0
+    tired: int = 0  # 疲劳度 0-100，0为完全不疲劳
 
     def __post_init__(self):
         now = datetime.now().isoformat()
@@ -46,6 +47,8 @@ class Pet:
 
     @property
     def status_emoji(self) -> str:
+        if self.tired >= 80:
+            return "exhausted"
         h = self.happiness
         if h >= 80: return "happy"
         if h >= 60: return "content"
@@ -73,6 +76,7 @@ class Pet:
             return get_text("no_longer_with_us", name=self.name)
         self.mood = min(100, self.mood + amount)
         self.energy = max(0, self.energy - 10)
+        self.tired += 10
         self.last_interaction = datetime.now().isoformat()
         self.clamp_stats()
         xp_msg = self.gain_xp(10)
@@ -84,6 +88,7 @@ class Pet:
             return get_text("no_longer_with_us", name=self.name)
         self.energy = min(100, self.energy + amount)
         self.hunger = max(0, self.hunger - 5)
+        self.tired = max(0, self.tired - 20)
         self.last_interaction = datetime.now().isoformat()
         self.clamp_stats()
         xp_msg = self.gain_xp(3)
@@ -95,8 +100,11 @@ class Pet:
             return get_text("no_longer_with_us", name=self.name)
         if self.energy < 15:
             return get_text("too_tired_to_train", name=self.name)
+        if self.tired >= 80:
+            return get_text("too_tired_to_train", name=self.name)
         self.energy = max(0, self.energy - 15)
         self.mood = max(0, self.mood - 5)
+        self.tired += 15
         self.last_interaction = datetime.now().isoformat()
         self.clamp_stats()
         xp_msg = self.gain_xp(amount)
@@ -107,6 +115,7 @@ class Pet:
         if not self.is_alive:
             return get_text("no_longer_with_us", name=self.name)
         self.mood = min(100, self.mood + amount)
+        self.tired += 3
         self.last_interaction = datetime.now().isoformat()
         self.clamp_stats()
         xp_msg = self.gain_xp(2)
@@ -136,6 +145,7 @@ class Pet:
         self.hunger = max(0, min(100, self.hunger))
         self.mood = max(0, min(100, self.mood))
         self.energy = max(0, min(100, self.energy))
+        self.tired = max(0, min(100, self.tired))
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -159,6 +169,7 @@ class Pet:
             "travel_atlas": self.travel_atlas,
             "current_travel": self.current_travel,
             "shiny_evolution_items": self.shiny_evolution_items,
+            "tired": self.tired,
         }
 
     @classmethod
@@ -184,4 +195,5 @@ class Pet:
             travel_atlas=data.get("travel_atlas", {}),
             current_travel=data.get("current_travel", None),
             shiny_evolution_items=data.get("shiny_evolution_items", 0),
+            tired=data.get("tired", 0),
         )

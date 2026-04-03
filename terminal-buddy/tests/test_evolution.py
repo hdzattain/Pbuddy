@@ -6,6 +6,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import unittest
 from terminal_buddy.pet import Pet
 from terminal_buddy.evolution import EvolutionSystem, EVOLUTION_PATHS, STARTER_SPECIES
+from terminal_buddy.i18n import set_language
 
 
 class TestEvolutionPaths(unittest.TestCase):
@@ -119,6 +120,10 @@ class TestCheckEvolution(unittest.TestCase):
 class TestEvolve(unittest.TestCase):
     """Test evolve method."""
 
+    def setUp(self):
+        """Set language to English for consistent test results."""
+        set_language("en")
+
     def test_evolve_changes_species(self):
         """Test evolve actually changes pet species."""
         pet = Pet(name="TestPet", species="blob", level=5)
@@ -126,8 +131,9 @@ class TestEvolve(unittest.TestCase):
         
         self.assertEqual(pet.species, "ghost")
         self.assertIn("evolved", msg.lower())
-        self.assertIn("blob", msg)
-        self.assertIn("ghost", msg)
+        # Use translated species names (capitalized)
+        self.assertIn("Blob", msg)
+        self.assertIn("Ghost", msg)
 
     def test_evolve_returns_none_when_no_evolution(self):
         """Test evolve returns None when no evolution available."""
@@ -143,8 +149,9 @@ class TestEvolve(unittest.TestCase):
         msg = EvolutionSystem.evolve(pet)
         
         self.assertIn("Buddy", msg)
-        self.assertIn("cat", msg)
-        self.assertIn("owl", msg)
+        # Use translated species names (capitalized)
+        self.assertIn("Cat", msg)
+        self.assertIn("Owl", msg)
         self.assertIn("evolved", msg.lower())
 
 

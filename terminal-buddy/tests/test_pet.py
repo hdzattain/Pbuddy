@@ -152,6 +152,9 @@ class TestTicker(unittest.TestCase):
 
 
 class TestEvolution(unittest.TestCase):
+    def setUp(self):
+        set_language("en")
+    
     def test_check_evolution_blob(self):
         pet = Pet(name="TestPet", species="blob", level=5)
         result = EvolutionSystem.check_evolution(pet)

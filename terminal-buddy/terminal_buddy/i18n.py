@@ -119,6 +119,43 @@ LANG_EN = {
     "lang_switched": "Language: {lang}",
     "lang_en": "English",
     "lang_zh": "简体中文",
+    
+    # Tired status
+    "tired": "Tired",
+    "tired_label": "Fatigue",
+    "feeling_exhausted": "{name} is feeling exhausted...",
+    "too_exhausted": "{name} is too exhausted!",
+    "exhausted": "Exhausted",
+    
+    # Status translations
+    "happy": "Happy",
+    "content": "Content",
+    "neutral": "Neutral",
+    "sad": "Sad",
+    "critical": "Critical",
+    
+    # Species names
+    "species_blob": "Blob",
+    "species_duck": "Duck",
+    "species_cat": "Cat",
+    "species_cactus": "Cactus",
+    "species_snail": "Snail",
+    "species_rabbit": "Rabbit",
+    "species_ghost": "Ghost",
+    "species_goose": "Goose",
+    "species_owl": "Owl",
+    "species_mushroom": "Mushroom",
+    "species_turtle": "Turtle",
+    "species_capybara": "Capybara",
+    "species_dragon": "Dragon",
+    "species_penguin": "Penguin",
+    "species_axolotl": "Axolotl",
+    "species_octopus": "Octopus",
+    "species_robot": "Robot",
+    "species_chonk": "Chonk",
+    
+    # Evolution message
+    "evolved_message": "{name} evolved from {old} to {new}!",
 }
 
 # Simplified Chinese texts
@@ -150,7 +187,7 @@ LANG_ZH = {
     "name_label": "名字：",
     "species_label": "种类：",
     "name_placeholder": "输入宠物名字",
-    "species_placeholder": "blob, duck, cat, cactus, snail, rabbit",
+    "species_placeholder": "史莱姆(blob), 鸭子(duck), 猫咪(cat), 仙人掌(cactus), 蜗牛(snail), 兔子(rabbit)",
     "create_btn": "创建",
     "cancel_btn": "取消",
     
@@ -236,6 +273,43 @@ LANG_ZH = {
     "lang_switched": "语言：{lang}",
     "lang_en": "English",
     "lang_zh": "简体中文",
+    
+    # 疲劳状态
+    "tired": "疲劳",
+    "tired_label": "疲劳",
+    "feeling_exhausted": "{name} 感到精疲力尽...",
+    "too_exhausted": "{name} 太累了！",
+    "exhausted": "精疲力尽",
+    
+    # 状态翻译
+    "happy": "开心",
+    "content": "满足",
+    "neutral": "平静",
+    "sad": "伤心",
+    "critical": "危急",
+    
+    # 物种名称
+    "species_blob": "史莱姆",
+    "species_duck": "鸭子",
+    "species_cat": "猫咪",
+    "species_cactus": "仙人掌",
+    "species_snail": "蜗牛",
+    "species_rabbit": "兔子",
+    "species_ghost": "幽灵",
+    "species_goose": "大鹅",
+    "species_owl": "猫头鹰",
+    "species_mushroom": "蘑菇",
+    "species_turtle": "海龟",
+    "species_capybara": "水豚",
+    "species_dragon": "龙",
+    "species_penguin": "企鹅",
+    "species_axolotl": "美西螈",
+    "species_octopus": "章鱼",
+    "species_robot": "机器人",
+    "species_chonk": "胖兔",
+    
+    # 进化消息
+    "evolved_message": "{name} 从 {old} 进化为 {new}！",
 }
 
 _LANGS = {
