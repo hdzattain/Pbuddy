@@ -13,6 +13,9 @@ from terminal_buddy.renderer import PetRenderer
 from terminal_buddy.evolution import STARTER_SPECIES
 from terminal_buddy.themes import THEMES
 from terminal_buddy.i18n import get_text, set_language, get_language, toggle_language
+from terminal_buddy.rarity import get_rarity_display
+from terminal_buddy.breakthrough import get_breakthrough_status, get_material_display
+from terminal_buddy.travel import get_travel_status, get_atlas_progress
 
 
 class PetDisplay(Static):
@@ -62,6 +65,17 @@ class StatsPanel(Static):
         lines = []
         lines.append(f"{get_text('name')}: {self.pet.name}")
         lines.append(f"{get_text('species')}: {self.pet.species}  Lv.{self.pet.level}")
+        
+        # 稀有度显示
+        rarity_display = get_rarity_display(self.pet.rarity, self.pet.is_shiny, get_language())
+        lines.append(f"{get_text('rarity_label')}: {rarity_display}")
+        # 阶段显示
+        phase_display = get_breakthrough_status(self.pet, get_language())
+        lines.append(f"{get_text('phase_label')}: {phase_display}")
+        # 材料显示
+        materials_display = get_material_display(self.pet, get_language())
+        lines.append(f"{get_text('materials_label')}: {materials_display}")
+        
         xp_needed = self.pet.xp_for_next_level
         lines.append(f"{get_text('xp')}: {self.pet.xp}/{xp_needed}")
         lines.append("")
@@ -69,6 +83,15 @@ class StatsPanel(Static):
         lines.append(f"{get_text('mood')}:   {self._bar(self.pet.mood)} {self.pet.mood}%")
         lines.append(f"{get_text('energy')}: {self._bar(self.pet.energy)} {self.pet.energy}%")
         lines.append(f"{get_text('status')}: {self.pet.status_emoji}")
+        # 旅行状态
+        travel_status = get_travel_status(self.pet, get_language())
+        lines.append(f"{get_text('travel_label')}: {travel_status}")
+        # 图鉴进度
+        atlas_progress = get_atlas_progress(self.pet, get_language())
+        lines.append(f"{get_text('atlas_label')}: {atlas_progress}")
+        # 闪光水晶
+        if self.pet.shiny_evolution_items > 0:
+            lines.append(f"{get_text('shiny_items_label')}: {self.pet.shiny_evolution_items}")
 
         self.update(chr(10).join(lines))
 
@@ -82,6 +105,8 @@ class ActionBar(Horizontal):
         yield Button(get_text("sleep_btn"), id="btn-sleep")
         yield Button(get_text("train_btn"), id="btn-train")
         yield Button(get_text("pet_btn"), id="btn-pet")
+        yield Button(get_text("breakthrough_btn"), id="btn-breakthrough")
+        yield Button(get_text("travel_btn"), id="btn-travel")
 
 
 class MessageLog(RichLog):
@@ -145,14 +170,14 @@ Screen {
 
 #pet-display {
     width: 24;
-    height: 12;
+    height: auto;
     border: solid green;
     content-align: center middle;
 }
 
 #stats-panel {
     width: 1fr;
-    height: 12;
+    height: auto;
     border: solid cyan;
     padding: 1;
 }
@@ -175,6 +200,8 @@ Screen {
         ("s", "do_sleep", "Sleep"),
         ("t", "train", "Train"),
         ("e", "pet_action", "Pet"),
+        ("b", "breakthrough", "Break"),
+        ("v", "travel", "Travel"),
         ("tab", "next_pet", "Next Pet"),
         ("n", "new_pet", "New Pet"),
         ("d", "toggle_theme", "Theme"),
@@ -271,6 +298,12 @@ Screen {
     def action_pet_action(self):
         self._do_action("pet")
 
+    def action_breakthrough(self):
+        self._do_action("breakthrough")
+
+    def action_travel(self):
+        self._do_action("travel")
+
     def action_next_pet(self):
         if self.pets:
             self.current_pet_index = (self.current_pet_index + 1) % len(self.pets)
@@ -311,6 +344,10 @@ Screen {
             self.action_train()
         elif button_id == "btn-pet":
             self.action_pet_action()
+        elif button_id == "btn-breakthrough":
+            self.action_breakthrough()
+        elif button_id == "btn-travel":
+            self.action_travel()
 
 
 def main():

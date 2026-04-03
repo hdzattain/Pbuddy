@@ -52,6 +52,11 @@ class Ticker:
         if energy_gain > 20:
             messages.append(get_text("well_rested", name=pet.name))
         
+        # 检查旅行是否完成
+        from .travel import check_travel_complete
+        travel_msgs = check_travel_complete(pet)
+        messages.extend(travel_msgs)
+        
         pet.last_interaction = datetime.now().isoformat()
         
         return messages

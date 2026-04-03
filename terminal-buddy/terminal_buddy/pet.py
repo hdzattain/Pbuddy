@@ -22,6 +22,14 @@ class Pet:
     last_fed: str = ""
     last_interaction: str = ""
     is_alive: bool = True
+    rarity: int = 1
+    is_shiny: bool = False
+    rarity_color: str = "white"
+    phase: int = 1
+    breakthrough_materials: dict = field(default_factory=dict)
+    travel_atlas: dict = field(default_factory=dict)
+    current_travel: dict | None = None
+    shiny_evolution_items: int = 0
 
     def __post_init__(self):
         now = datetime.now().isoformat()
@@ -108,10 +116,19 @@ class Pet:
     def gain_xp(self, amount: int) -> str | None:
         if not self.is_alive:
             return None
+        # 检查是否已达阶段等级上限
+        from .breakthrough import get_level_cap
+        level_cap = get_level_cap(self.phase)
+        if self.level >= level_cap:
+            self.xp = 0
+            return get_text("level_capped", name=self.name, level=level_cap)
         self.xp += amount
         if self.xp >= self.xp_for_next_level:
             self.xp -= self.xp_for_next_level
             self.level += 1
+            # 升级后再次检查上限
+            if self.level >= level_cap:
+                self.xp = 0
             return get_text("level_up", name=self.name, level=self.level)
         return None
 
@@ -134,6 +151,14 @@ class Pet:
             "last_fed": self.last_fed,
             "last_interaction": self.last_interaction,
             "is_alive": self.is_alive,
+            "rarity": self.rarity,
+            "is_shiny": self.is_shiny,
+            "rarity_color": self.rarity_color,
+            "phase": self.phase,
+            "breakthrough_materials": self.breakthrough_materials,
+            "travel_atlas": self.travel_atlas,
+            "current_travel": self.current_travel,
+            "shiny_evolution_items": self.shiny_evolution_items,
         }
 
     @classmethod
@@ -151,4 +176,12 @@ class Pet:
             last_fed=data.get("last_fed", ""),
             last_interaction=data.get("last_interaction", ""),
             is_alive=data.get("is_alive", True),
+            rarity=data.get("rarity", 1),
+            is_shiny=data.get("is_shiny", False),
+            rarity_color=data.get("rarity_color", "white"),
+            phase=data.get("phase", 1),
+            breakthrough_materials=data.get("breakthrough_materials", {}),
+            travel_atlas=data.get("travel_atlas", {}),
+            current_travel=data.get("current_travel", None),
+            shiny_evolution_items=data.get("shiny_evolution_items", 0),
         )
