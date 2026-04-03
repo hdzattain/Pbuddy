@@ -10,6 +10,7 @@ from datetime import datetime, timedelta
 from terminal_buddy.pet import Pet
 from terminal_buddy.storage import PetStorage
 from terminal_buddy.actions import PetActions
+from terminal_buddy.i18n import set_language
 
 
 class TestPetActions(unittest.TestCase):
@@ -17,6 +18,7 @@ class TestPetActions(unittest.TestCase):
 
     def setUp(self):
         """Set up temporary storage for each test."""
+        set_language("en")
         self.temp_dir = tempfile.mkdtemp()
         self.storage = PetStorage(storage_dir=self.temp_dir)
         self.actions = PetActions(self.storage)
@@ -24,6 +26,7 @@ class TestPetActions(unittest.TestCase):
     def tearDown(self):
         """Clean up temporary directory."""
         shutil.rmtree(self.temp_dir)
+        set_language("zh")
 
     def test_create_pet_basic(self):
         """Test basic pet creation."""
@@ -54,12 +57,14 @@ class TestInteractFeed(unittest.TestCase):
     """Test feed interaction."""
 
     def setUp(self):
+        set_language("en")
         self.temp_dir = tempfile.mkdtemp()
         self.storage = PetStorage(storage_dir=self.temp_dir)
         self.actions = PetActions(self.storage)
 
     def tearDown(self):
         shutil.rmtree(self.temp_dir)
+        set_language("zh")
 
     def test_feed_increases_hunger(self):
         """Test feeding increases hunger."""
@@ -96,12 +101,14 @@ class TestInteractPlay(unittest.TestCase):
     """Test play interaction."""
 
     def setUp(self):
+        set_language("en")
         self.temp_dir = tempfile.mkdtemp()
         self.storage = PetStorage(storage_dir=self.temp_dir)
         self.actions = PetActions(self.storage)
 
     def tearDown(self):
         shutil.rmtree(self.temp_dir)
+        set_language("zh")
 
     def test_play_increases_mood(self):
         """Test playing increases mood."""
@@ -139,12 +146,14 @@ class TestInteractSleep(unittest.TestCase):
     """Test sleep interaction."""
 
     def setUp(self):
+        set_language("en")
         self.temp_dir = tempfile.mkdtemp()
         self.storage = PetStorage(storage_dir=self.temp_dir)
         self.actions = PetActions(self.storage)
 
     def tearDown(self):
         shutil.rmtree(self.temp_dir)
+        set_language("zh")
 
     def test_sleep_increases_energy(self):
         """Test sleeping increases energy."""
@@ -183,12 +192,14 @@ class TestInteractTrain(unittest.TestCase):
     """Test train interaction."""
 
     def setUp(self):
+        set_language("en")
         self.temp_dir = tempfile.mkdtemp()
         self.storage = PetStorage(storage_dir=self.temp_dir)
         self.actions = PetActions(self.storage)
 
     def tearDown(self):
         shutil.rmtree(self.temp_dir)
+        set_language("zh")
 
     def test_train_gives_xp(self):
         """Test training gives XP."""
@@ -237,12 +248,14 @@ class TestInteractPet(unittest.TestCase):
     """Test pet (cuddle) interaction."""
 
     def setUp(self):
+        set_language("en")
         self.temp_dir = tempfile.mkdtemp()
         self.storage = PetStorage(storage_dir=self.temp_dir)
         self.actions = PetActions(self.storage)
 
     def tearDown(self):
         shutil.rmtree(self.temp_dir)
+        set_language("zh")
 
     def test_pet_increases_mood(self):
         """Test petting increases mood."""
@@ -270,12 +283,14 @@ class TestInteractEdgeCases(unittest.TestCase):
     """Test edge cases in interactions."""
 
     def setUp(self):
+        set_language("en")
         self.temp_dir = tempfile.mkdtemp()
         self.storage = PetStorage(storage_dir=self.temp_dir)
         self.actions = PetActions(self.storage)
 
     def tearDown(self):
         shutil.rmtree(self.temp_dir)
+        set_language("zh")
 
     def test_interact_with_dead_pet(self):
         """Test interacting with dead pet."""
@@ -313,12 +328,14 @@ class TestGetAllPets(unittest.TestCase):
     """Test get_all_pets method."""
 
     def setUp(self):
+        set_language("en")
         self.temp_dir = tempfile.mkdtemp()
         self.storage = PetStorage(storage_dir=self.temp_dir)
         self.actions = PetActions(self.storage)
 
     def tearDown(self):
         shutil.rmtree(self.temp_dir)
+        set_language("zh")
 
     def test_get_all_pets_empty(self):
         """Test getting pets when none exist."""
@@ -350,12 +367,14 @@ class TestActionPersistence(unittest.TestCase):
     """Test that actions persist changes."""
 
     def setUp(self):
+        set_language("en")
         self.temp_dir = tempfile.mkdtemp()
         self.storage = PetStorage(storage_dir=self.temp_dir)
         self.actions = PetActions(self.storage)
 
     def tearDown(self):
         shutil.rmtree(self.temp_dir)
+        set_language("zh")
 
     def test_feed_persists(self):
         """Test feed action persists changes."""

@@ -218,6 +218,39 @@ class TestStorageDataIntegrity(unittest.TestCase):
             content = f.read()
         
         self.assertIn("テスト", content)
+    
+    def test_new_fields_preserved(self):
+        """Test rarity/breakthrough/travel fields are preserved."""
+        pet = Pet(name="TestPet", rarity=4, is_shiny=True, phase=3)
+        pet.breakthrough_materials = {"advanced_stone": 2}
+        pet.travel_atlas = {"1": ["北京", "上海"], "2": ["泰国"]}
+        pet.shiny_evolution_items = 1
+        
+        self.storage.save_pets([pet])
+        loaded = self.storage.load_pets()[0]
+        
+        self.assertEqual(loaded.rarity, 4)
+        self.assertTrue(loaded.is_shiny)
+        self.assertEqual(loaded.phase, 3)
+        self.assertEqual(loaded.breakthrough_materials, {"advanced_stone": 2})
+        self.assertEqual(loaded.travel_atlas, {"1": ["北京", "上海"], "2": ["泰国"]})
+        self.assertEqual(loaded.shiny_evolution_items, 1)
+    
+    def test_backward_compatibility_old_data(self):
+        """Test loading old data without new fields works."""
+        file_path = Path(self.temp_dir) / "pets.json"
+        old_data = [{"id": "test123", "name": "OldPet", "species": "blob",
+                     "hunger": 80, "mood": 80, "energy": 80, "xp": 0,
+                     "level": 1, "born_at": "", "last_fed": "", 
+                     "last_interaction": "", "is_alive": True}]
+        with open(file_path, 'w', encoding='utf-8') as f:
+            json.dump(old_data, f)
+        
+        loaded = self.storage.load_pets()
+        self.assertEqual(len(loaded), 1)
+        self.assertEqual(loaded[0].rarity, 1)
+        self.assertEqual(loaded[0].phase, 1)
+        self.assertEqual(loaded[0].travel_atlas, {})
 
 
 class TestStorageCorruptionHandling(unittest.TestCase):
