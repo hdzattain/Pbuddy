@@ -10,53 +10,6 @@ from .breakthrough import PHASES, MATERIAL_KEYS
 from .i18n import get_text
 
 
-class AtlasLanguageScreen(Screen):
-    """Language selection screen for atlas view."""
-
-    CSS = """
-    #lang-select-panel {
-        width: 50;
-        height: auto;
-        padding: 2;
-        border: solid green;
-    }
-    #atlas-title {
-        text-align: center;
-        text-style: bold;
-        margin-bottom: 1;
-    }
-    #lang-prompt {
-        text-align: center;
-        margin-bottom: 1;
-    }
-    #btn-lang-en, #btn-lang-zh {
-        width: 100%;
-        margin: 1 0;
-    }
-    #btn-lang-back {
-        width: 100%;
-        margin-top: 1;
-    }
-    """
-
-    def compose(self) -> ComposeResult:
-        with Center():
-            with Vertical(id="lang-select-panel"):
-                yield Label("Atlas View / \u56fe\u9274\u67e5\u770b", id="atlas-title")
-                yield Label("Select Language / \u9009\u62e9\u8bed\u8a00", id="lang-prompt")
-                yield Button("English", id="btn-lang-en", variant="primary")
-                yield Button("\u7b80\u4f53\u4e2d\u6587", id="btn-lang-zh", variant="primary")
-                yield Button("Back / \u8fd4\u56de", id="btn-lang-back")
-
-    def on_button_pressed(self, event: Button.Pressed):
-        if event.button.id == "btn-lang-en":
-            self.dismiss(("en", None))
-        elif event.button.id == "btn-lang-zh":
-            self.dismiss(("zh", None))
-        elif event.button.id == "btn-lang-back":
-            self.dismiss(None)
-
-
 class AtlasPetSelectScreen(Screen):
     """Pet selection screen for atlas view."""
 
@@ -88,8 +41,8 @@ class AtlasPetSelectScreen(Screen):
         self.lang = lang
 
     def compose(self) -> ComposeResult:
-        title = "Select Pet" if self.lang == "en" else "\u9009\u62e9\u5ba0\u7269"
-        back = "Back" if self.lang == "en" else "\u8fd4\u56de"
+        title = get_text("select_pet", lang=self.lang)
+        back = get_text("back", lang=self.lang)
 
         with Center():
             with Vertical(id="pet-select-panel"):
@@ -99,7 +52,7 @@ class AtlasPetSelectScreen(Screen):
                     species_name = get_text(species_key, lang=self.lang)
                     if species_name == species_key:
                         species_name = pet.species
-                    label = f"{pet.name} ({species_name}) Lv.{pet.level}"
+                    label = f"{pet.name} ({species_name}) {get_text('level_prefix', lang=self.lang)}{pet.level}"
                     yield Button(label, id=f"btn-pet-{i}", classes="pet-select-btn")
                 yield Button(back, id="btn-pet-back")
 
@@ -128,9 +81,9 @@ class StageProgressWidget(Static):
         total = len(self.stage_info["locations"])
         visited_count = len(self.visited_locations)
 
-        status = ("UNLOCKED" if self.lang == "en" else "\u5df2\u89e3\u9501") if self.is_unlocked else ("LOCKED" if self.lang == "en" else "\u672a\u89e3\u9501")
+        status = get_text("unlocked", lang=self.lang) if self.is_unlocked else get_text("locked", lang=self.lang)
 
-        bar_width = 25
+        bar_width = 20
         filled = int(visited_count / total * bar_width) if total > 0 else 0
         empty = bar_width - filled
         bar = "[" + "\u2588" * filled + "\u2591" * empty + "]"
@@ -138,20 +91,21 @@ class StageProgressWidget(Static):
 
         complete_mark = ""
         if visited_count >= total:
-            complete_mark = " \u2713 COMPLETE" if self.lang == "en" else " \u2713 \u5df2\u5b8c\u6210"
+            complete_mark = f" \u2713 {get_text('complete', lang=self.lang)}"
 
-        header = f"\u2550\u2550\u2550 Stage {self.stage_num}: {name} [{status}] \u2550\u2550\u2550"
+        stage_label = get_text("stage_label", lang=self.lang)
+        header = f"\u2550\u2550\u2550 {stage_label} {self.stage_num}: {name} [{status}] \u2550\u2550\u2550"
         progress = f"  {bar} {visited_count}/{total} ({percent}%){complete_mark}"
 
         lines = [header, progress]
 
         if self.is_unlocked and self.visited_locations:
-            loc_label = "Visited" if self.lang == "en" else "\u5df2\u8bbf\u95ee"
+            loc_label = get_text("visited_label", lang=self.lang)
             display_locs = self.visited_locations[:8]
             locations_text = f"  {loc_label}: {', '.join(display_locs)}"
             if len(self.visited_locations) > 8:
-                more = f" +{len(self.visited_locations) - 8} more" if self.lang == "en" else f" +{len(self.visited_locations) - 8} \u66f4\u591a"
-                locations_text += more
+                more_label = get_text("more_label", lang=self.lang)
+                locations_text += f" +{len(self.visited_locations) - 8} {more_label}"
             lines.append(locations_text)
 
         return chr(10).join(lines)
@@ -172,13 +126,13 @@ class PolarWidget(Static):
         self.lang = lang
 
     def _render_content(self) -> str:
-        title = "Polar Expedition" if self.lang == "en" else "\u5357\u5317\u6781\u63a2\u9669"
-        status = ("UNLOCKED" if self.lang == "en" else "\u5df2\u89e3\u9501") if self.is_unlocked else ("LOCKED" if self.lang == "en" else "\u672a\u89e3\u9501")
+        title = get_text("polar_expedition", lang=self.lang)
+        status = get_text("unlocked", lang=self.lang) if self.is_unlocked else get_text("locked", lang=self.lang)
 
         total = len(POLAR_LOCATIONS)
         visited = len(self.polar_visited)
 
-        bar_width = 25
+        bar_width = 20
         filled = int(visited / total * bar_width) if total > 0 else 0
         empty = bar_width - filled
         bar = "[" + "\u2588" * filled + "\u2591" * empty + "]"
@@ -189,11 +143,11 @@ class PolarWidget(Static):
         lines = [header, progress]
 
         if self.polar_visited:
-            loc_label = "Explored" if self.lang == "en" else "\u5df2\u63a2\u7d22"
+            loc_label = get_text("explored_label", lang=self.lang)
             lines.append(f"  {loc_label}: {', '.join(self.polar_visited)}")
 
         if self.shiny_items > 0:
-            crystal_label = "Shiny Evolution Crystals" if self.lang == "en" else "\u95ea\u5149\u8fdb\u5316\u6c34\u6676"
+            crystal_label = get_text("shiny_crystals_label", lang=self.lang)
             lines.append(f"  {crystal_label}: {self.shiny_items}")
 
         return chr(10).join(lines)
@@ -211,7 +165,7 @@ class MaterialWidget(Static):
         self.lang = lang
 
     def _render_content(self) -> str:
-        title = "Breakthrough Materials" if self.lang == "en" else "\u7a81\u7834\u6750\u6599"
+        title = get_text("breakthrough_materials_title", lang=self.lang)
         lines = [f"\u2550\u2550\u2550 {title} \u2550\u2550\u2550"]
 
         has_any = False
@@ -227,7 +181,7 @@ class MaterialWidget(Static):
                 has_any = True
 
         if not has_any:
-            empty_msg = "No materials collected yet" if self.lang == "en" else "\u6682\u65e0\u6750\u6599"
+            empty_msg = get_text("no_materials_yet", lang=self.lang)
             lines.append(f"  {empty_msg}")
 
         return chr(10).join(lines)
@@ -242,7 +196,7 @@ class AtlasDetailScreen(Screen):
     CSS = """
     #atlas-detail-container {
         width: 100%;
-        height: 1fr;
+        height: 100%;
         padding: 1;
     }
 
@@ -255,6 +209,7 @@ class AtlasDetailScreen(Screen):
     .stage-widget {
         width: 100%;
         height: auto;
+        min-height: 5;
         margin: 1 0;
         padding: 1;
         border: solid green;
@@ -263,6 +218,7 @@ class AtlasDetailScreen(Screen):
     .stage-widget-locked {
         width: 100%;
         height: auto;
+        min-height: 5;
         margin: 1 0;
         padding: 1;
         border: solid grey;
@@ -271,6 +227,7 @@ class AtlasDetailScreen(Screen):
     .polar-widget {
         width: 100%;
         height: auto;
+        min-height: 5;
         margin: 1 0;
         padding: 1;
         border: solid cyan;
@@ -279,6 +236,7 @@ class AtlasDetailScreen(Screen):
     .material-widget {
         width: 100%;
         height: auto;
+        min-height: 5;
         margin: 1 0;
         padding: 1;
         border: solid yellow;
@@ -304,8 +262,9 @@ class AtlasDetailScreen(Screen):
         if species_name == species_key:
             species_name = self.pet.species
 
-        title_text = f"{self.pet.name} ({species_name}) Lv.{self.pet.level}"
-        atlas_title = "Atlas" if self.lang == "en" else "\u56fe\u9274"
+        level_prefix = get_text("level_prefix", lang=self.lang)
+        title_text = f"{self.pet.name} ({species_name}) {level_prefix}{self.pet.level}"
+        atlas_title = get_text("atlas_title", lang=self.lang)
 
         with VerticalScroll(id="atlas-detail-container"):
             yield Label(
@@ -345,8 +304,7 @@ class AtlasDetailScreen(Screen):
                 classes="material-widget",
             )
 
-            back_text = "Back" if self.lang == "en" else "\u8fd4\u56de"
-            yield Button(back_text, id="btn-atlas-back")
+            yield Button(get_text("back", lang=self.lang), id="btn-atlas-back")
 
     def on_button_pressed(self, event: Button.Pressed):
         if event.button.id == "btn-atlas-back":

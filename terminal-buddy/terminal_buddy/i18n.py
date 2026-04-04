@@ -171,6 +171,11 @@ LANG_EN = {
     "no_materials_yet": "No materials collected yet",
     "breakthrough_materials_title": "Breakthrough Materials",
     "polar_expedition": "Polar Expedition",
+    "level_prefix": "Lv.",
+    "stage_label": "Stage",
+    "more_label": "more",
+    "shiny_crystals_label": "Shiny Evolution Crystals",
+    "atlas_title": "Atlas",
 }
 
 # Simplified Chinese texts
@@ -340,6 +345,11 @@ LANG_ZH = {
     "no_materials_yet": "暂无材料",
     "breakthrough_materials_title": "突破材料",
     "polar_expedition": "南北极探险",
+    "level_prefix": "等级",
+    "stage_label": "阶段",
+    "more_label": "更多",
+    "shiny_crystals_label": "闪光进化水晶",
+    "atlas_title": "图鉴",
 }
 
 _LANGS = {

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Terminal Buddy Textual TUI Application."""
 from textual.app import App, ComposeResult
-from textual.containers import Horizontal, Vertical, Container, Grid
+from textual.containers import Horizontal, Vertical, Container, Grid, Center
 from textual.widgets import Header, Footer, Static, Button, Label, Input, RichLog
 from textual.screen import Screen
 from textual import on
@@ -16,7 +16,7 @@ from terminal_buddy.i18n import get_text, set_language, get_language, toggle_lan
 from terminal_buddy.rarity import get_rarity_display
 from terminal_buddy.breakthrough import get_breakthrough_status, get_material_display
 from terminal_buddy.travel import get_travel_status, get_atlas_progress
-from terminal_buddy.atlas_view import AtlasLanguageScreen, AtlasPetSelectScreen, AtlasDetailScreen
+from terminal_buddy.atlas_view import AtlasPetSelectScreen, AtlasDetailScreen
 
 
 class PetDisplay(Static):
@@ -69,7 +69,7 @@ class StatsPanel(Static):
         species_display = get_text(f"species_{self.pet.species}")
         if species_display == f"species_{self.pet.species}":
             species_display = self.pet.species
-        lines.append(f"{get_text('species')}: {species_display}  Lv.{self.pet.level}")
+        lines.append(f"{get_text('species')}: {species_display}  {get_text('level_prefix')}{self.pet.level}")
         
         # 稀有度显示
         rarity_display = get_rarity_display(self.pet.rarity, self.pet.is_shiny, get_language())
@@ -127,6 +127,43 @@ class MessageLog(RichLog):
 
     def add_message(self, message: str):
         self.write(message)
+
+
+class LanguageSelectScreen(Screen):
+    """启动时的语言选择界面"""
+
+    CSS = """
+    #lang-panel {
+        width: 50;
+        height: auto;
+        border: solid green;
+        padding: 2 4;
+    }
+    #lang-panel Label {
+        width: 100%;
+        text-align: center;
+        margin-bottom: 1;
+    }
+    #lang-panel Button {
+        width: 100%;
+        margin: 1 0;
+    }
+    """
+
+    def compose(self) -> ComposeResult:
+        with Center():
+            with Vertical(id="lang-panel"):
+                yield Label("Terminal Buddy", id="lang-title")
+                yield Label("Select Language / 选择语言", id="lang-prompt")
+                yield Button("简体中文", id="btn-startup-zh", variant="primary")
+                yield Button("English", id="btn-startup-en")
+
+    @on(Button.Pressed)
+    def on_button_pressed(self, event: Button.Pressed):
+        if event.button.id == "btn-startup-zh":
+            self.dismiss("zh")
+        elif event.button.id == "btn-startup-en":
+            self.dismiss("en")
 
 
 class NewPetScreen(Screen):
@@ -242,12 +279,26 @@ Screen {
         yield Footer()
 
     def on_mount(self):
+        self.push_screen(LanguageSelectScreen(), self._on_language_selected)
+        self.set_interval(0.8, self._animation_tick)
+
+    def _on_language_selected(self, lang: str) -> None:
+        """语言选择完成后的回调"""
+        set_language(lang)
+        self.title = get_text("app_title")
         self.pets = self.pet_actions.get_all_pets()
         if not self.pets:
             self.push_screen(NewPetScreen(), self._on_new_pet_result)
         else:
             self._update_display()
-        self.set_interval(0.8, self._animation_tick)
+        self.call_later(self._rebuild_action_bar)
+
+    async def _rebuild_action_bar(self) -> None:
+        """重建ActionBar按钮以反映当前语言"""
+        action_bar = self.query_one("#action-bar", ActionBar)
+        await action_bar.remove_children()
+        for btn in action_bar.compose():
+            await action_bar.mount(btn)
 
     def _on_new_pet_result(self, result):
         if result:
@@ -316,20 +367,16 @@ Screen {
 
     def action_atlas_view(self):
         """Open atlas view system."""
-        self.push_screen(AtlasLanguageScreen(), self._on_atlas_lang_result)
-
-    def _on_atlas_lang_result(self, result):
-        if result is None:
-            return
-        lang, _ = result
+        lang = get_language()
         self.push_screen(
             AtlasPetSelectScreen(self.pets, lang=lang),
-            lambda pet, _lang=lang: self._on_atlas_pet_result(pet, _lang),
+            self._on_atlas_pet_result,
         )
 
-    def _on_atlas_pet_result(self, pet, lang):
+    def _on_atlas_pet_result(self, pet):
         if pet is None:
             return
+        lang = get_language()
         self.push_screen(AtlasDetailScreen(pet, lang=lang))
 
     def action_next_pet(self):
@@ -351,13 +398,9 @@ Screen {
         new_lang = toggle_language()
         lang_name = get_text("lang_zh" if new_lang == "zh" else "lang_en")
         self._log_message(get_text("lang_switched", lang=lang_name))
-        # Refresh the UI
+        self.title = get_text("app_title")
         self._update_display()
-        # Rebuild action bar with new language
-        action_bar = self.query_one("#action-bar", ActionBar)
-        await action_bar.remove_children()
-        for btn in action_bar.compose():
-            await action_bar.mount(btn)
+        await self._rebuild_action_bar()
 
     @on(Button.Pressed)
     def on_button_pressed(self, event: Button.Pressed):
