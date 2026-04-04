@@ -347,7 +347,7 @@ Screen {
         theme_name = theme_names[self.current_theme_index]
         self._log_message(get_text("theme_changed", theme_name=THEMES[theme_name].name))
 
-    def action_toggle_language(self):
+    async def action_toggle_language(self):
         new_lang = toggle_language()
         lang_name = get_text("lang_zh" if new_lang == "zh" else "lang_en")
         self._log_message(get_text("lang_switched", lang=lang_name))
@@ -355,9 +355,9 @@ Screen {
         self._update_display()
         # Rebuild action bar with new language
         action_bar = self.query_one("#action-bar", ActionBar)
-        action_bar.remove_children()
+        await action_bar.remove_children()
         for btn in action_bar.compose():
-            action_bar.mount(btn)
+            await action_bar.mount(btn)
 
     @on(Button.Pressed)
     def on_button_pressed(self, event: Button.Pressed):
