@@ -16,6 +16,7 @@ from terminal_buddy.i18n import get_text, set_language, get_language, toggle_lan
 from terminal_buddy.rarity import get_rarity_display
 from terminal_buddy.breakthrough import get_breakthrough_status, get_material_display
 from terminal_buddy.travel import get_travel_status, get_atlas_progress
+from terminal_buddy.atlas_view import AtlasLanguageScreen, AtlasPetSelectScreen, AtlasDetailScreen
 
 
 class PetDisplay(Static):
@@ -114,6 +115,7 @@ class ActionBar(Horizontal):
         yield Button(get_text("pet_btn"), id="btn-pet")
         yield Button(get_text("breakthrough_btn"), id="btn-breakthrough")
         yield Button(get_text("travel_btn"), id="btn-travel")
+        yield Button(get_text("atlas_view_btn"), id="btn-atlas-view")
 
 
 class MessageLog(RichLog):
@@ -209,6 +211,7 @@ Screen {
         ("e", "pet_action", "Pet"),
         ("b", "breakthrough", "Break"),
         ("v", "travel", "Travel"),
+        ("a", "atlas_view", "Atlas View"),
         ("tab", "next_pet", "Next Pet"),
         ("n", "new_pet", "New Pet"),
         ("d", "toggle_theme", "Theme"),
@@ -311,6 +314,24 @@ Screen {
     def action_travel(self):
         self._do_action("travel")
 
+    def action_atlas_view(self):
+        """Open atlas view system."""
+        self.push_screen(AtlasLanguageScreen(), self._on_atlas_lang_result)
+
+    def _on_atlas_lang_result(self, result):
+        if result is None:
+            return
+        lang, _ = result
+        self.push_screen(
+            AtlasPetSelectScreen(self.pets, lang=lang),
+            lambda pet, _lang=lang: self._on_atlas_pet_result(pet, _lang),
+        )
+
+    def _on_atlas_pet_result(self, pet, lang):
+        if pet is None:
+            return
+        self.push_screen(AtlasDetailScreen(pet, lang=lang))
+
     def action_next_pet(self):
         if self.pets:
             self.current_pet_index = (self.current_pet_index + 1) % len(self.pets)
@@ -355,6 +376,8 @@ Screen {
             self.action_breakthrough()
         elif button_id == "btn-travel":
             self.action_travel()
+        elif button_id == "btn-atlas-view":
+            self.action_atlas_view()
 
 
 def main():

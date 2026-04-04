@@ -156,6 +156,21 @@ LANG_EN = {
     
     # Evolution message
     "evolved_message": "{name} evolved from {old} to {new}!",
+    
+    # Atlas View
+    "atlas_view_btn": "Atlas [G]",
+    "atlas_view_title": "Atlas View",
+    "select_language": "Select Language",
+    "select_pet": "Select Pet",
+    "back": "Back",
+    "unlocked": "UNLOCKED",
+    "locked": "LOCKED",
+    "complete": "COMPLETE",
+    "visited_label": "Visited",
+    "explored_label": "Explored",
+    "no_materials_yet": "No materials collected yet",
+    "breakthrough_materials_title": "Breakthrough Materials",
+    "polar_expedition": "Polar Expedition",
 }
 
 # Simplified Chinese texts
@@ -310,6 +325,21 @@ LANG_ZH = {
     
     # 进化消息
     "evolved_message": "{name} 从 {old} 进化为 {new}！",
+    
+    # 图鉴查看
+    "atlas_view_btn": "图鉴 [G]",
+    "atlas_view_title": "图鉴查看",
+    "select_language": "选择语言",
+    "select_pet": "选择宠物",
+    "back": "返回",
+    "unlocked": "已解锁",
+    "locked": "未解锁",
+    "complete": "已完成",
+    "visited_label": "已访问",
+    "explored_label": "已探索",
+    "no_materials_yet": "暂无材料",
+    "breakthrough_materials_title": "突破材料",
+    "polar_expedition": "南北极探险",
 }
 
 _LANGS = {
